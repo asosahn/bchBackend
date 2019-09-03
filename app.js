@@ -31,7 +31,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 
-mongoose.connect('mongodb://localhost:27017/bchpruebas', {useNewUrlParser: true})
+mongoose.connect('mongodb://hazsk:hazsk20182018@kcheo.com:27017/bchpruebas?authSource=admin', {useNewUrlParser: true})
+// mongoose.connect('mongodb://localhost:27017/bchpruebas', {useNewUrlParser: true})
 .then(() => console.log("Connected to mongodb"))
 .catch((err) => {
   console.log(err);
@@ -39,7 +40,7 @@ mongoose.connect('mongodb://localhost:27017/bchpruebas', {useNewUrlParser: true}
 
 const isRevoked = (req, payload, done) => {
   console.log(payload.exp);
-  const expired = moment().unix() > payload.exp;
+  // const expired = moment().unix() > payload.exp;
   console.log(req);
   return done();
 }
