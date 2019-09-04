@@ -44,7 +44,6 @@ const getArtist = (req, res) => {
 const updateArtist = (req, res) => {
     try {
         const props = req.body;
-        // const newArtist = new Artist(props);
         Artist.findOneAndUpdate({_id: mongoose.Types.ObjectId(props._id) }, { $set: props }, { new: true })
         .exec()
         .then((artist) => {
