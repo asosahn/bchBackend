@@ -41,8 +41,25 @@ const getArtist = (req, res) => {
 
 }
 
+const updateArtist = (req, res) => {
+    try {
+        const props = req.body;
+        // const newArtist = new Artist(props);
+        Artist.findOneAndUpdate({_id: mongoose.Types.ObjectId(props._id) }, { $set: props }, { new: true })
+        .exec()
+        .then((artist) => {
+            res.json(artist);
+        })
+        .catch((err) => {
+            res.status(403).json(err.message);
+        });
+    } catch (err) {
+        res.status(500).json({ err: err.message });
+    }
+}
 
 module.exports = {
     createArtist,
-    getArtist
+    getArtist,
+    updateArtist
 }
