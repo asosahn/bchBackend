@@ -41,7 +41,7 @@ mongoose.connect('mongodb://hazsk:hazsk20182018@kcheo.com:27017/bchpruebas?authS
 const isRevoked = (req, payload, done) => {
   console.log(payload.exp);
   // const expired = moment().unix() > payload.exp;
-  console.log(req);
+  // console.log(req);
   return done();
 }
 
@@ -64,10 +64,10 @@ const jwtConfig = {
 
 // catch 404 and forward to error handler
 
-// app.use(jwt(jwtConfig).unless({
-//   path: [{ url: "/auth/login" }, { url: "/auth/create" }]
-// }));
 app.use('/', indexRouter);
+// app.use(jwt(jwtConfig).unless({
+//   path: [{ url: "/auth/login" }, { url: "/auth/create" }, { url: "/auth/refreshToken" }]
+// }));
 app.use('/users', usersRouter);
 app.use('/auth', AuthRouter);
 
