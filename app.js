@@ -65,9 +65,9 @@ const jwtConfig = {
 // catch 404 and forward to error handler
 
 app.use('/', indexRouter);
-app.use(jwt(jwtConfig).unless({
-  path: [{ url: "/auth/login" }, { url: "/auth/logout" }, { url: "/auth/create" }, { url: "/auth/refreshToken" }]
-}));
+// app.use(jwt(jwtConfig).unless({
+//   path: [{ url: "/auth/login" }, { url: "/auth/logout" }, { url: "/auth/create" }, { url: "/auth/refreshToken" }]
+// }));
 app.use('/users', usersRouter);
 app.use('/auth', AuthRouter);
 
