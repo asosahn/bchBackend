@@ -57,6 +57,7 @@ const updateArtist = (req, res) => {
     }
 }
 
+
 module.exports = {
     createArtist,
     getArtist,

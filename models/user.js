@@ -7,14 +7,14 @@ const mongoose = require("mongoose");
 const bcrypt = require('bcrypt-nodejs');
 
 const userSchema = new mongoose.Schema({
-    firstName: { type: String },
-    lastName: { type: String },
+    firstName: { type: String, required: [true, 'firstName is required'] },
+    lastName: { type: String , required: [true, 'lastName is required'] },
     email: { type: String },
     gender: { type: String, enum: ["m", "f"] },
     refreshToken: String,
     hash: String,
     salt: String,
-    username: String,
+    username: { type: String, unique: true, required: [true, 'username is required'] },
     password: String,
     fullName: String,
     enabled: { type: Boolean, default: true },
@@ -67,7 +67,7 @@ userSchema.methods.generateJwt = (userModel) => {
         roles: user.roles
     };
     const privateKey = "BCH ANGULARJS";
-    return jwt.sign({ user: user_ }, privateKey, { expiresIn: "48h" });
+    return jwt.sign({ user: user_ }, privateKey, { expiresIn: "2m" });
 };
 
 const User = mongoose.model("User", userSchema);

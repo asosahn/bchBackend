@@ -15,6 +15,7 @@ var usersRouter = require('./routes/users');
 const mongoose = require("mongoose");
 const jwt = require('express-jwt');
 const cors = require("cors");
+const Tokens = require("./models/tokens");
 const moment = require('moment-timezone');
 var app = express();
 
@@ -39,11 +40,16 @@ mongoose.connect('mongodb://hazsk:hazsk20182018@kcheo.com:27017/bchpruebas?authS
 })
 
 const isRevoked = (req, payload, done) => {
-  console.log(payload.exp);
-  // const expired = moment().unix() > payload.exp;
-  // console.log(req);
-  return done();
-}
+  const token = req.headers.authorization.split(" ")[1] || req.query.token;
+  Tokens.findOne({ token: token }).exec()
+  .then((token) => {
+    if (!token) {
+      return done();
+    } else {
+      return done(new Error('token blocked'));
+    }
+  });
+};
 
 const publicKey= "BCH ANGULARJS"
 const jwtConfig = {
@@ -66,7 +72,7 @@ const jwtConfig = {
 
 app.use('/', indexRouter);
 app.use(jwt(jwtConfig).unless({
-  path: [{ url: "/auth/login" }, { url: "/auth/logout" }, { url: "/auth/create" }, { url: "/auth/refreshToken" }]
+  path: [{ url: "/auth/login" }, { url: "/auth/logout" }, { url: "/auth/create" }, { url: "/auth/refreshtoken" }]
 }));
 app.use('/users', usersRouter);
 app.use('/auth', AuthRouter);
@@ -89,7 +95,9 @@ app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
+  if (err.message === 'token blocked') {
+    err.status = 401;
+  }
   // render the error page
   res.status(err.status || 500);
   res.json({message: err.message, status: err.status});
