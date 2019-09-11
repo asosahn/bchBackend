@@ -13,6 +13,7 @@ Router.post("/refreshtoken", AuthController.refreshToken);
 // Router.options("/upload", upload.single(), AuthController.fileUpload);
 Router.post("/upload", upload.single("file"), AuthController.fileUpload);
 Router.post("/download", AuthController.downloadFiles);
+Router.post("/excel", upload.single("file"), AuthController.readexcel);
 Router.get("/files", AuthController.obtainFiles);
 // Router.get("/", BandController.getBand);
 

@@ -8,6 +8,10 @@ const UPLOAD_FILES = path.join(__dirname, "/../files");
 const Files = require("../models/files");
 const fs = require("fs");
 const Tokens = require('../models/tokens');
+const xlstojson = require("xls-to-json-lc");
+const xlsxtojson = require("xlsx-to-json-lc");
+const csv=require('csvtojson');
+const _ = require('lodash');
 const fsPromises = fs.promises;
 
 const login = (req, res, next) => {
@@ -171,14 +175,45 @@ const fileUpload = (req, res, next) => {
     }
 
     const file = req.file;
-    const params = req.body ? JSON.parse(req.body.body) : undefined;
+    const params = !_.isEmpty(req.body) ? JSON.parse(req.body.body) : undefined;
+    let exceltojson;
     fs.writeFile(`${UPLOAD_FILES}/${file.originalname}`, file.buffer, err => {
       if (err) throw err;
       console.log("The file has been saved!");
       new Files(file)
         .save()
         .then(filenew => {
-          res.json(filenew);
+          dataSend = filenew;
+          if(req.file && req.file.originalname.split('.')[req.file.originalname.split('.').length-1] === 'xlsx'){
+            exceltojson = xlsxtojson;
+           } else if(req.file && req.file.originalname.split('.')[req.file.originalname.split('.').length-1] === 'xls') {
+            exceltojson = xlstojson;
+           } else if (req.file && req.file.originalname.split('.')[req.file.originalname.split('.').length-1] === 'csv') {
+            exceltojson = 'csv';
+           }
+          if(exceltojson && exceltojson !== "csv") {
+            exceltojson({
+              input: `${UPLOAD_FILES}/${file.originalname}`, //the same path where we uploaded our file
+              output: null, //since we don't need output.json
+              lowerCaseHeaders:true
+          }, function(err,result){
+              if(err) {
+                  return res.status(403).json({error_code:1,err_desc:err, data: null});
+              }
+           
+              return res.json({ file: filenew, data: result});
+             });
+          } else if (exceltojson && exceltojson === "csv") {
+
+            csv()
+            .fromFile(`${UPLOAD_FILES}/${file.originalname}`)
+            .then((jsonObj)=>{
+             
+              res.json({ file: filenew, data: jsonObj});
+            })
+          } else {
+            res.json({ file: filenew, data: undefined});
+          }
         })
         .catch(err => {
           res.status(403).json({ error: err.toString() });
@@ -188,6 +223,71 @@ const fileUpload = (req, res, next) => {
     return res.status(500).json({ error: true, message: err.toString() });
   }
 };
+
+const readexcel = (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "no file was uploaded" });
+    }
+
+    const file = req.file;
+    const params = !_.isEmpty(req.body) ? JSON.parse(req.body.body) : undefined;
+    let exceltojson;
+    fs.writeFile(`${UPLOAD_FILES}/${file.originalname}`, file.buffer, err => {
+      if (err) throw err;
+      console.log("The file has been saved!");
+      new Files(file)
+        .save()
+        .then(filenew => {
+          dataSend = filenew;
+          if(req.file && req.file.originalname.split('.')[req.file.originalname.split('.').length-1] === 'xlsx'){
+            exceltojson = xlsxtojson;
+           } else if(req.file && req.file.originalname.split('.')[req.file.originalname.split('.').length-1] === 'xls') {
+            exceltojson = xlstojson;
+           } else if (req.file && req.file.originalname.split('.')[req.file.originalname.split('.').length-1] === 'csv') {
+            exceltojson = 'csv';
+           }
+          if(exceltojson && exceltojson !== "csv") {
+            exceltojson({
+              input: `${UPLOAD_FILES}/${file.originalname}`, //the same path where we uploaded our file
+              output: null, //since we don't need output.json
+              lowerCaseHeaders:true
+          }, function(err,result){
+              if(err) {
+                  return res.status(403).json({error_code:1,err_desc:err, data: null});
+              }
+              deleteFiles(`${UPLOAD_FILES}/${file.originalname}`, filenew);
+              return res.json({ file: filenew, data: result});
+             });
+          } else if (exceltojson && exceltojson === "csv") {
+
+            csv()
+            .fromFile(`${UPLOAD_FILES}/${file.originalname}`)
+            .then((jsonObj)=>{
+              deleteFiles(`${UPLOAD_FILES}/${file.originalname}`, filenew);
+              res.json({ file: filenew, data: jsonObj});
+            })
+          } else {
+            res.json({ file: filenew, data: undefined});
+          }
+        })
+        .catch(err => {
+          res.status(403).json({ error: err.toString() });
+        });
+    });
+  } catch (err) {
+    return res.status(500).json({ error: true, message: err.toString() });
+  }
+};
+
+const deleteFiles = (path_, file) => {
+  fs.unlink(path_, (err) => {
+    if(err) {
+      console.log(err);
+    }
+    Files.remove({ _id: mongoose.Types.ObjectId(file._id) }).exec();
+  });
+}
 
 const downloadFiles = (req, res) => {
   try {
@@ -239,5 +339,6 @@ module.exports = {
   refreshToken,
   fileUpload,
   downloadFiles,
-  obtainFiles
+  obtainFiles,
+  readexcel
 };
