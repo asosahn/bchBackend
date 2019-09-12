@@ -30,9 +30,7 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 socket.origins("*:*");
-socket.of("/").adapter.on("error", function(err) {
-    console.log(err);
-  });
+
 
   socket.on("connect", (client) => {
     //   console.log(client);
@@ -47,6 +45,10 @@ socket.of("/").adapter.on("error", function(err) {
     client.on("disconnect", () => {
         console.log('disconneted user :' + client.id);
     })
+  });
+
+  socket.of("/").adapter.on("error", function(err) {
+    console.log(err);
   });
 /**
  * Normalize a port into a number, string, or false.
