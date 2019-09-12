@@ -201,7 +201,7 @@ const fileUpload = (req, res, next) => {
                   return res.status(403).json({error_code:1,err_desc:err, data: null});
               }
            
-              return res.json({ file: filenew, data: result});
+              return res.json({ file: filenew, data: convertKeys(result)});
              });
           } else if (exceltojson && exceltojson === "csv") {
 
@@ -209,7 +209,7 @@ const fileUpload = (req, res, next) => {
             .fromFile(`${UPLOAD_FILES}/${file.originalname}`)
             .then((jsonObj)=>{
              
-              res.json({ file: filenew, data: jsonObj});
+              res.json({ file: filenew, data: convertKeys(jsonObj)});
             })
           } else {
             res.json({ file: filenew, data: undefined});
@@ -223,6 +223,30 @@ const fileUpload = (req, res, next) => {
     return res.status(500).json({ error: true, message: err.toString() });
   }
 };
+
+const convertKeys = (array) => {
+  const keys = Object.keys(array[0]);
+  const newArray = array.map(items => {
+    let newItem = {};
+    keys.forEach(item => {
+      const compyItem = item;
+      if(!_.isEmpty(items[item])) {
+        const lowerkey = compyItem.toLowerCase()
+        try {
+          if(Object.is(Number(items[item]),NaN)) {
+            newItem[lowerkey] = items[item];
+          } else {
+            newItem[lowerkey] = Number(items[item]);
+          }
+        } catch(err) {
+          newItem[lowerkey] = items[item];
+        }
+      }
+    })
+    return newItem;
+  });
+  return newArray;
+}
 
 const readexcel = (req, res, next) => {
   try {
@@ -257,7 +281,7 @@ const readexcel = (req, res, next) => {
                   return res.status(403).json({error_code:1,err_desc:err, data: null});
               }
               deleteFiles(`${UPLOAD_FILES}/${file.originalname}`, filenew);
-              return res.json({ file: filenew, data: result});
+              return res.json({ file: filenew, data: convertKeys(result)});
              });
           } else if (exceltojson && exceltojson === "csv") {
 
@@ -265,7 +289,7 @@ const readexcel = (req, res, next) => {
             .fromFile(`${UPLOAD_FILES}/${file.originalname}`)
             .then((jsonObj)=>{
               deleteFiles(`${UPLOAD_FILES}/${file.originalname}`, filenew);
-              res.json({ file: filenew, data: jsonObj});
+              res.json({ file: filenew, data: convertKeys(jsonObj)});
             })
           } else {
             res.json({ file: filenew, data: undefined});
