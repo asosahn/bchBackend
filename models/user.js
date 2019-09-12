@@ -70,7 +70,7 @@ userSchema.methods.generateJwt = (userModel) => {
         roles: user.roles
     };
     const privateKey = "BCH ANGULARJS";
-    return jwt.sign({ user: user_ }, privateKey, { expiresIn: "2m" });
+    return jwt.sign({ user: user_ }, privateKey, { expiresIn: "30m" });
 };
 
 const User = mongoose.model("User", userSchema);
