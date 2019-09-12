@@ -64,6 +64,9 @@ userSchema.methods.generateJwt = (userModel) => {
         _id: user._id.toString(),
         email: user.email,
         username: user.username,
+        fullName: `${ user.firstName } ${ user.lastName }`,
+        firstName: user.firstName,
+        lastName: user.lastName,
         roles: user.roles
     };
     const privateKey = "BCH ANGULARJS";

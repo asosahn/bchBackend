@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-
+const io = require('socket.io');
 /**
  * Module dependencies.
  */
 
-var app = require('../app');
+var app = require('./app');
 var debug = require('debug')('nodejscurso:server');
 var http = require('http');
 
@@ -24,11 +24,30 @@ var server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
-
+console.log('inicializando socket');
+const socket = require("./io").init(server);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+socket.origins("*:*");
+socket.of("/").adapter.on("error", function(err) {
+    console.log(err);
+  });
 
+  socket.on("connect", (client) => {
+    //   console.log(client);
+    // const user = client.request.user.user;
+    console.log(`connected to socket ${client.id}`);
+    
+    client.on('global', (data) => {
+        console.log('emit global')
+        client.broadcast.emit('global', data);
+    });
+
+    client.on("disconnect", () => {
+        console.log('disconneted user :' + client.id);
+    })
+  });
 /**
  * Normalize a port into a number, string, or false.
  */
