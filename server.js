@@ -42,6 +42,10 @@ socket.origins("*:*");
         client.broadcast.emit('global', data);
     });
 
+    client.on('fileupload', (data) => {
+      client.broadcast.emit('fileupload', data);
+    });
+
     client.on("disconnect", () => {
         console.log('disconneted user :' + client.id);
     })

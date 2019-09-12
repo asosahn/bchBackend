@@ -1,5 +1,6 @@
 const Artist = require("../models/artists");
 const mongoose = require('mongoose');
+const io = require('../io');
 
 const createArtist = (req, res) => {
     try {
@@ -7,6 +8,7 @@ const createArtist = (req, res) => {
         const newArtist = new Artist(props);
         newArtist.save()
         .then((artist) => {
+            io.getIO().emit('artist', artist);
             res.json(artist);
         })
         .catch((err) => {
