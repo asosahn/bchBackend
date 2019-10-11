@@ -13,7 +13,8 @@ const xlsxtojson = require("xlsx-to-json-lc");
 const csv=require('csvtojson');
 const _ = require('lodash');
 const fsPromises = fs.promises;
-
+const saveParagon = require("../controllers/paragon").saveParagon;
+const Paragon = require("../models/paragonfiles");
 const login = (req, res, next) => {
   try {
     passport.authenticate("local", (err, user, info) => {
@@ -281,6 +282,14 @@ const readexcel = (req, res, next) => {
                   return res.status(403).json({error_code:1,err_desc:err, data: null});
               }
               deleteFiles(`${UPLOAD_FILES}/${file.originalname}`, filenew);
+              // saveParagon(result);
+              Paragon.insertMany(result).then((saved) => {
+                console.log("saved");
+              })
+              .catch((err) => {
+                console.log(err);
+              })
+              // res.json({ file: filenew, data: convertKeys(result)});
               return res.json({ file: filenew, data: convertKeys(result)});
              });
           } else if (exceltojson && exceltojson === "csv") {
@@ -289,6 +298,12 @@ const readexcel = (req, res, next) => {
             .fromFile(`${UPLOAD_FILES}/${file.originalname}`)
             .then((jsonObj)=>{
               deleteFiles(`${UPLOAD_FILES}/${file.originalname}`, filenew);
+              Paragon.insertMany(jsonObj).then((saved) => {
+                console.log("saved");
+              })
+              .catch((err) => {
+                console.log(err);
+              })
               res.json({ file: filenew, data: convertKeys(jsonObj)});
             })
           } else {
