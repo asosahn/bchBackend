@@ -37,9 +37,17 @@ const getParagonDataDay = (req, res) => {
   }
 };
 
-const downloadParagon = (req, res) => {
+const downloadParagon = (req, res, next) => {
+  try {
     const id = req.query.id;
-    res.download(`${UPLOAD_FILES}/${id}.pdf`, `${id}.pdf`);
+    res.download(`${UPLOAD_FILES}/${id}.pdf`, `${id}.pdf`, (err) => {
+      if(err) {
+        return res.redirect('http://iahrworldcongress.org/congress-complete-proceedings-book/');
+      }
+    } );
+  } catch(err) {
+     res.redirect('http://iahrworldcongress.org/congress-complete-proceedings-book/');
+  }
 }
 const saveParagon = async (params) => {
   const saved = await Paragon.updateMany(
