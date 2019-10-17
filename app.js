@@ -87,6 +87,7 @@ app.use(
       { url: "/paragon" },
       { url: "/paragon/download" },
       { url: "/paragon/days" },
+      { url: "/paragon/downloadfiles" },
     ]
   })
 );
