@@ -40,6 +40,8 @@ const getParagonDataDay = (req, res) => {
 const downloadParagon = (req, res, next) => {
   try {
     const id = req.query.id;
+    res.header('Access-Control-Allow-Origin', "*");
+    res.header('Access-Control-Allow-Headers', "*");
     res.download(`${UPLOAD_FILES}/${id}.pdf`, `${id}.pdf`, (err) => {
       if(err) {
         return res.redirect('http://iahrworldcongress.org/congress-complete-proceedings-book/');
@@ -53,6 +55,8 @@ const downloadParagon = (req, res, next) => {
 const downloadParagonFiles = (req, res, next) => {
   try {
     const id = req.query.id;
+    res.header('Access-Control-Allow-Origin', "*");
+    res.header('Access-Control-Allow-Headers', "*");
     res.download(`${UPLOAD_FILES}/${id}`, `${id}`, (err) => {
       if(err) {
         return res.redirect('http://iahrworldcongress.org/congress-complete-proceedings-book/');
