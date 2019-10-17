@@ -7,7 +7,8 @@ const UPLOAD_FILES = path.join(__dirname, "/../files");
 const getParagonData = (req, res) => {
   try {
     const params = req.query;
-    console.log(params);
+    res.header('Access-Control-Allow-Origin', "*");
+    res.header('Access-Control-Allow-Headers', "*");
     Paragon.find(params)
       .exec()
       .then(files => {
@@ -24,6 +25,8 @@ const getParagonData = (req, res) => {
 const getParagonDataDay = (req, res) => {
   try {
     const params = req.query;
+    res.header('Access-Control-Allow-Origin', "*");
+    res.header('Access-Control-Allow-Headers', "*");
     ParagonDay.find(params)
       .exec()
       .then(files => {
