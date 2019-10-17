@@ -49,6 +49,19 @@ const downloadParagon = (req, res, next) => {
      res.redirect('http://iahrworldcongress.org/congress-complete-proceedings-book/');
   }
 }
+
+const downloadParagonFiles = (req, res, next) => {
+  try {
+    const id = req.query.id;
+    res.download(`${UPLOAD_FILES}/${id}`, `${id}`, (err) => {
+      if(err) {
+        return res.redirect('http://iahrworldcongress.org/congress-complete-proceedings-book/');
+      }
+    } );
+  } catch(err) {
+     res.redirect('http://iahrworldcongress.org/congress-complete-proceedings-book/');
+  }
+}
 const saveParagon = async (params) => {
   const saved = await Paragon.updateMany(
     { description: params.description, author: params.author },
@@ -62,5 +75,6 @@ module.exports = {
     getParagonData,
   saveParagon,
   downloadParagon,
-  getParagonDataDay
+  getParagonDataDay,
+  downloadParagonFiles
 };
