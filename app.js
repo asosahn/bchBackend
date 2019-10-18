@@ -75,10 +75,10 @@ const jwtConfig = {
 };
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', 'http://iahrworldcongress.org');
-  next();
-});
+// app.use(function (req, res, next) {
+//   res.setHeader('Access-Control-Allow-Origin', 'http://iahrworldcongress.org');
+//   next();
+// });
 app.use("/", indexRouter);
 app.use(
   jwt(jwtConfig).unless({
