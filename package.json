@@ -13,7 +13,7 @@
     "csvtojson": "^2.0.10",
     "debug": "~2.6.9",
     "express": "~4.16.1",
-    "express-fileupload": "^1.1.5",
+    "express-fileupload": "^1.1.9",
     "express-jwt": "^5.3.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
